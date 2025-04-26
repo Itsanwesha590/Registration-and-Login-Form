@@ -1,110 +1,89 @@
-#include<iostream>
-#include<fstream>
-using namespace std;
+class Temp:
+    def __init__(self):
+        self.userName = ""
+        self.Email = ""
+        self.password = ""
+        self.searchName = ""
+        self.searchPass = ""
+        self.searchEmail = ""
+        self.file_name = "loginData.txt"
 
-class temp{
-    string userName,Email,password;
-    string searchName,searchPass,searchEmail;
-    fstream file;
-    public:
-    void login();
-    void signUP();
-    void forgot();
-}obj;
+    def login(self):
+        print("----------LOGIN---------")
+        self.searchName = input("Enter Your User Name: ")
+        self.searchPass = input("Enter Your Password: ")
 
-int main(){
-    char choice;
-    cout<<"\n1- Login";
-    cout<<"\n2- Sign-Up";
-    cout<<"\n3- Forgot Password";
-    cout<<"\n4- Exit";
-    cout<<"\nEnter Your Choice :: ";
-    cin>>choice;
+        try:
+            with open(self.file_name, "r") as file:
+                found = False
+                for line in file:
+                    data = line.strip().split("*")
+                    if len(data) == 3:
+                        userName, Email, password = data
+                        if userName == self.searchName:
+                            found = True
+                            if password == self.searchPass:
+                                print("\nAccount Login Successful...!")
+                                print(f"Username: {userName}")
+                                print(f"Email: {Email}")
+                            else:
+                                print("Password is Incorrect...!")
+                            break
+                if not found:
+                    print("Username not found!")
+        except FileNotFoundError:
+            print("No database file found!")
 
-    switch(choice){
-        case '1':
-            cin.ignore();
-            obj.login();
-        break;
-        case '2':
-            cin.ignore();
-            obj.signUP();
-        break;
-        case '3':
-            cin.ignore();
-            obj.forgot();
-        break;
-        case '4':
-            return 0;
-        break;
-        defualt:
-            cout<<"Invalid Selection...!";
-    }
-}
-void temp :: signUP(){
-    cout<<"\nEnter Your User Name :: ";
-    getline(cin,userName);
-    cout<<"Enter Your Email Address :: ";
-    getline(cin,Email);
-    cout<<"Enter Your Password :: ";
-    getline(cin,password);
+    def sign_up(self):
+        self.userName = input("Enter Your User Name: ")
+        self.Email = input("Enter Your Email Address: ")
+        self.password = input("Enter Your Password: ")
 
-    file.open("loginData.txt",ios :: out | ios :: app);
-    file<<userName<<"*"<<Email<<"*"<<password<<endl;
-    file.close();
-}
-void temp :: login(){
- 
-    cout<<"----------LOGIN---------"<<endl;
-    cout<<"Enter Your User Name :: "<<endl;
-    getline(cin,searchName);
-    cout<<"Enter Your Password :: "<<endl;
-    getline(cin,searchPass);
+        with open(self.file_name, "a") as file:
+            file.write(f"{self.userName}*{self.Email}*{self.password}\n")
+        print("Account created successfully!")
 
-    file.open("loginData.txt",ios :: in);
-    getline(file,userName,'*');
-    getline(file,Email,'*');
-    getline(file,password,'\n');
-    while(!file.eof()){
-        if(userName == searchName){
-            if(password == searchPass){
-                cout<<"\nAccount Login Succesfull...!";
-                cout<<"\nUsername :: "<<userName<<endl;
-                cout<<"\nEmail :: "<<Email<<endl;
-            }else{
-                cout<<"Password is Incorrect...!";
-            }
-        }
-    getline(file,userName,'*');
-    getline(file,Email,'*');
-    getline(file,password,'\n');
-    }
-    file.close();
-}
-void temp :: forgot(){
-    cout<<"\nEnter Your UserName :: ";
-    getline(cin,searchName);
-    cout<<"\nEnter Your Email Address :: ";
-    getline(cin,searchEmail);
+    def forgot(self):
+        self.searchName = input("Enter Your UserName: ")
+        self.searchEmail = input("Enter Your Email Address: ")
 
-    file.open("loginData.txt",ios :: in);
-    getline(file,userName,'*');
-    getline(file,Email,'*');
-    getline(file,password,'\n');
-    while(!file.eof()){
-        if(userName == searchName){
-            if(Email == searchEmail){
-                cout<<"\nAccount Found...!"<<endl;
-                cout<<"Your Password :: "<<password<<endl;
-            }else{
-                cout<<"Not found...!\n";
-            }
-        }else{
-            cout<<"\nNot fount...!\n";
-        }
-    getline(file,userName,'*');
-    getline(file,Email,'*');
-    getline(file,password,'\n');
-    }
-    file.close();
-}
+        try:
+            with open(self.file_name, "r") as file:
+                found = False
+                for line in file:
+                    data = line.strip().split("*")
+                    if len(data) == 3:
+                        userName, Email, password = data
+                        if userName == self.searchName:
+                            found = True
+                            if Email == self.searchEmail:
+                                print("\nAccount Found!")
+                                print(f"Your Password: {password}")
+                            else:
+                                print("Email does not match!")
+                            break
+                if not found:
+                    print("Username not found!")
+        except FileNotFoundError:
+            print("No database file found!")
+
+# Main program
+if __name__ == "__main__":
+    obj = Temp()
+    while True:
+        print("\n1- Login")
+        print("2- Sign-Up")
+        print("3- Forgot Password")
+        print("4- Exit")
+        choice = input("Enter Your Choice: ")
+
+        if choice == '1':
+            obj.login()
+        elif choice == '2':
+            obj.sign_up()
+        elif choice == '3':
+            obj.forgot()
+        elif choice == '4':
+            break
+        else:
+            print("Invalid Selection...!")
